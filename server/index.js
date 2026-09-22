@@ -31,7 +31,7 @@ const allowedOrigin = (value) => {
     const url = new URL(value);
     return (
       ['http:', 'https:'].includes(url.protocol) &&
-      (['localhost', '127.0.0.1'].includes(url.hostname) ||
+      (['localhost', '0.0.0.0'].includes(url.hostname) ||
         url.hostname.endsWith('.ngrok-free.app') ||
         url.hostname.endsWith('.ngrok.io') ||
         process.env.APP_ORIGIN?.split(',').map((origin) => origin.trim()).includes(value))
@@ -930,8 +930,8 @@ app.use((err, req, res, next) => {
     .json({ error: err.status ? err.message : 'Unexpected server error. Please try again.' });
 });
 await connect(); // reload environment after local .env updates
-app.listen(process.env.PORT || 4000, '127.0.0.1', () =>
-  console.log(`AnnSetu API · http://127.0.0.1:${process.env.PORT || 4000} · MongoDB connected`),
+app.listen(process.env.PORT || 4000, '0.0.0.0', () =>
+  console.log(`AnnSetu API · http://0.0.0.0:${process.env.PORT || 4000} · MongoDB connected`),
 );
 
 
