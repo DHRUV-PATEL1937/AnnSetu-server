@@ -1,0 +1,29 @@
+{
+  "name": "annsetu-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server/index.js",
+    "start": "node server/index.js",
+    "seed": "node server/seed.js",
+    "test": "node --test tests/*.test.js",
+    "integration": "node tests/integration.js",
+    "format": "prettier --write \"server/**/*.js\" \"tests/**/*.{js,mjs}\" \"*.json\"",
+    "formatcheck": "prettier --check \"server/**/*.js\" \"tests/**/*.{js,mjs}\" \"*.json\""
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.8"
+  }
+}
