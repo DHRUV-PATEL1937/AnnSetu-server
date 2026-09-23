@@ -34,7 +34,9 @@ const allowedOrigin = (value) => {
       (['localhost', '0.0.0.0'].includes(url.hostname) ||
         url.hostname.endsWith('.ngrok-free.app') ||
         url.hostname.endsWith('.ngrok.io') ||
-        process.env.APP_ORIGIN?.split(',').map((origin) => origin.trim()).includes(value))
+        process.env.APP_ORIGIN?.split(',')
+          .map((origin) => origin.trim())
+          .includes(value))
     );
   } catch {
     return false;
@@ -55,7 +57,8 @@ app.use(
   }),
 );
 app.use(express.json({ limit: '6mb' }));
-app.use(cookieParser());app.use((req, res, next) => {
+app.use(cookieParser());
+app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (origin && allowedOrigin(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -159,6 +162,23 @@ app.get('/api/health', async (req, res) =>
     ai: process.env.SARVAM_API_KEY ? 'configured' : 'not_configured',
   }),
 );
+app.get('/api/public/impact', async (req, res) => {
+  const [confirmed, activeOrganizations] = await Promise.all([
+    Batch.aggregate([
+      { $match: { status: 'confirmed' } },
+      { $group: { _id: null, recoveredKg: { $sum: '$quantity' }, deliveries: { $sum: 1 } } },
+    ]),
+    User.distinct('org', { active: true }),
+  ]);
+  const recoveredKg = round(confirmed[0]?.recoveredKg || 0);
+  res.json({
+    recoveredKg,
+    mealEquivalents: Math.floor(recoveredKg / 0.4),
+    deliveries: confirmed[0]?.deliveries || 0,
+    activeOrganizations: activeOrganizations.length,
+    methodology: 'Recipient-confirmed demonstration records',
+  });
+});
 app.post('/api/auth/login', rateLimit({ windowMs: 15 * 60000, limit: 60 }), async (req, res) => {
   const b = z
     .object({ email: z.string().email(), password: z.string().min(1).max(150) })
@@ -933,5 +953,3 @@ await connect(); // reload environment after local .env updates
 app.listen(process.env.PORT || 4000, '0.0.0.0', () =>
   console.log(`AnnSetu API · http://0.0.0.0:${process.env.PORT || 4000} · MongoDB connected`),
 );
-
-
