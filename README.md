@@ -1,6 +1,8 @@
 # AnnSetu server
 
-Express + MongoDB + Sarvam API for AnnSetu. This repository contains no React/Vite frontend.
+Express + MongoDB + Sarvam API for AnnSetu. 
+
+This repository contains no React/Vite frontend.
 
 ## Local development
 
